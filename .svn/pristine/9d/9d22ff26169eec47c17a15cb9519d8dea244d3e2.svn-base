@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<beacons uuid="60ABF5CD-9D72-4524-824E-27031F5E6F76">
+	<beacon major="20000" minor="21000" appId="1" appName="App1" />	
+	<beacon major="20000" minor="22000" appId="2" appName="App2" />	
+	<beacon major="30000" minor="30000" appId="3" appName="App3" />	
+</beacons>

@@ -1,0 +1,33 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ServiceTest.BeaconPocService;
+
+namespace ServiceTest
+{
+    class Program
+    {
+        private const string Uuid = "60ABF5CD-9D72-4524-824E-27031F5E6F76";
+
+        static void Main(string[] args)
+        {
+        try
+            {
+                using (var client = new BeaconPocServiceClient())
+                {
+                    Console.WriteLine(client.GetVersion());
+                    var appInfo = client.GetAppInfo(new BeaconInfo { Uuid = Uuid, Major = 20000, Minor = 22000 });
+                    Console.WriteLine($"Service said: {appInfo.Name}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Console.WriteLine("Press Enter to quit.");
+            Console.ReadLine();
+        }
+    }
+}

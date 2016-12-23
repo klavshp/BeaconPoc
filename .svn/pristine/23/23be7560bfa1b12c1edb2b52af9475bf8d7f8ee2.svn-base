@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Reflection;
+using System.Xml.Linq;
+
+namespace BeaconPocService
+{
+    public class Beacons
+    {
+        public Beacons()
+        {
+            BeaconList = new List<Beacon>();
+        }
+        public string Uuid { get; set; }
+
+        public List<Beacon> BeaconList { get; }
+
+    }
+
+    public class Beacon
+    {
+        public int Major { get; set; }
+
+        public int Minor { get; set; }
+
+        public string AppId { get; set; }
+
+        public string AppName { get; set; }
+    }
+
+    public class BeaconConfig
+    {
+        public Beacons Beacons { get; set; }
+
+        public BeaconConfig()
+        {
+            try
+            {
+                Beacons = new Beacons();
+                var xdoc = XDocument.Load($"{Path.GetDirectoryName(Assembly.GetExecutingAssembly().GetName().CodeBase)}\\beacons.xml");
+
+                foreach (var beacons in xdoc.Elements("beacons"))
+                {
+                    Beacons.Uuid = beacons.Attribute("uuid").Value;
+
+                    foreach (var beacon in beacons.Elements("beacon"))
+                    {
+                        Beacons.BeaconList.Add(new Beacon
+                        {
+                            Major = int.Parse(beacon.Attribute("major").Value),
+                            Minor = int.Parse(beacon.Attribute("minor").Value),
+                            AppId = beacon.Attribute("appId").Value,
+                            AppName = beacon.Attribute("appName").Value,
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)    // ToDo: Add proper error handling
+            {
+                Trace.WriteLine(ex.Message);
+                throw;
+            }
+        }
+    }
+}

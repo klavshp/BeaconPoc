@@ -1,0 +1,21 @@
+﻿using System.Reflection;
+
+namespace BeaconPocService
+{
+    public class BeaconService : IBeaconPocService
+    {
+        private BeaconHandler _beaconHandler;
+
+        public AppInfo GetAppInfo(BeaconInfo beaconInfo)
+        {
+            if (_beaconHandler == null) _beaconHandler = new BeaconHandler(new BeaconConfig());
+
+            return _beaconHandler.GetAppInfo(beaconInfo);
+        }
+
+        public string GetVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+    }
+}

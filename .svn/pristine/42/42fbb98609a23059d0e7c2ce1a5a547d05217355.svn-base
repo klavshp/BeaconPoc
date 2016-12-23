@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Start">Start scanning</string>
+  <string name="WebService">Call Web Service</string>
+  <string name="ApplicationName">Beacon POC</string>
+</resources>

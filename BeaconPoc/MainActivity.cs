@@ -1,0 +1,170 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Android.App;
+using Android.Widget;
+using Android.OS;
+using BeaconPoc.BeaconPocService;
+using RadiusNetworks.IBeaconAndroid;
+
+namespace BeaconPoc
+{
+    [Activity(Label = "BeaconPoc", MainLauncher = true, Icon = "@drawable/icon")]
+    public class MainActivity : Activity, IBeaconConsumer
+    {
+        private const string Uuid = "60ABF5CD-9D72-4524-824E-27031F5E6F76";
+        private const string BeaconId = "myBeacon";
+        private readonly IBeaconManager _beaconMgr;
+        private readonly MonitorNotifier _monitorNotifier;
+        private readonly RangeNotifier _rangeNotifier;
+        private readonly Region _monitoringRegion;
+        private readonly Region _rangingRegion;
+        private bool _started;
+        private ListView _resultListView;
+        private ArrayAdapter _adapter;
+        private string _savedStatus;
+
+        public MainActivity()
+        {
+            _beaconMgr = IBeaconManager.GetInstanceForApplication(this);
+
+            _monitorNotifier = new MonitorNotifier();
+            _monitoringRegion = new Region(BeaconId, Uuid, null, null);
+
+            _rangeNotifier = new RangeNotifier();
+            _rangingRegion = new Region(BeaconId, Uuid, null, null);
+        }
+
+        protected override void OnCreate(Bundle bundle)
+        {
+            base.OnCreate(bundle);
+
+            SetContentView(Resource.Layout.Main);
+
+            var startButton = FindViewById<Button>(Resource.Id.StartButton);
+            startButton.Text = "Press to listen for Beacons";
+
+            var webserviceButton = FindViewById<Button>(Resource.Id.WebServiceButton);
+            webserviceButton.Text = "Press to call Web Service";
+
+            _resultListView = FindViewById<ListView>(Resource.Id.listView1);
+            _adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleListItem1, new List<string>());
+            _resultListView.Adapter = _adapter;
+
+            _beaconMgr.Bind(this);
+
+            _monitorNotifier.EnterRegionComplete += EnteredRegion;
+            _monitorNotifier.ExitRegionComplete += ExitedRegion;
+
+            _rangeNotifier.DidRangeBeaconsInRegionComplete += RangingBeaconsInRegion;
+
+            startButton.Click += (sender, e) =>
+            {
+                if (_started)
+                {
+                    startButton.Text = "Press to listen for Beacons";
+                    DisplayStatus("Listening stopped", true);
+                    _started = false;
+                }
+                else
+                {
+                    startButton.Text = "Press to stop listening";
+                    DisplayStatus("Listening started", true);
+                    _savedStatus = "";
+                    _started = true;
+                }
+            };
+
+            webserviceButton.Click += (sender, e) =>
+            {
+                try
+                {
+                    using (var client = new BeaconService())
+                    {
+                        var appInfo = client.GetAppInfo(new BeaconInfo { Uuid = "60ABF5CD-9D72-4524-824E-27031F5E6F76", Major = "20000", Minor = "21000" });
+                        DisplayStatus($"Service said: {appInfo.Name}");
+                        DisplayStatus($"Service version is: {client.GetVersion()}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DisplayStatus(ex.Message);
+                }
+           };
+        }
+
+        public void OnIBeaconServiceConnect()
+        {
+            _beaconMgr.SetMonitorNotifier(_monitorNotifier);
+            _beaconMgr.SetRangeNotifier(_rangeNotifier);
+
+            _beaconMgr.StartMonitoringBeaconsInRegion(_monitoringRegion);
+            _beaconMgr.StartRangingBeaconsInRegion(_rangingRegion);
+        }
+
+        private void DisplayStatus(string status, bool clear = false)
+        {
+            RunOnUiThread(() =>
+            {
+                string newStatus;
+                if ((_savedStatus != null) && (status == _savedStatus.TrimEnd('.')))
+                {
+                    newStatus = _savedStatus.Length < 40 ? _savedStatus + "." : _savedStatus.TrimEnd('.');
+                    _adapter.Remove(_adapter.GetItem(_adapter.Count - 1));
+                    _adapter.NotifyDataSetChanged();
+                }
+                else
+                {
+                    newStatus = status;
+                }
+                if (clear) _adapter.Clear();
+                _adapter.Add(newStatus);
+                _savedStatus = newStatus;
+                _adapter.NotifyDataSetChanged();
+                _resultListView.SetSelection(_adapter.Count);
+            });
+        }
+
+        private void RangingBeaconsInRegion(object sender, RangeEventArgs e)
+        {
+            if (!_started) return;
+
+            for (var i = 1; i <= e.Beacons.Count; i++)
+            {
+                var beacon = e.Beacons.ElementAt(i - 1);
+                if (beacon == null) return;
+
+                switch ((ProximityType)beacon.Proximity)
+                {
+                    case ProximityType.Immediate:
+                        DisplayStatus($"Beacon {beacon.Major}/{beacon.Minor}: 'Immediate'");
+                        break;
+                    case ProximityType.Near:
+                        DisplayStatus($"Beacon {beacon.Major}/{beacon.Minor}: 'Near'");
+                        break;
+                    case ProximityType.Far:
+                        DisplayStatus($"Beacon {beacon.Major}/{beacon.Minor}: 'Far'");
+                        break;
+                    case ProximityType.Unknown:
+                        DisplayStatus($"Beacon {beacon.Major}/{beacon.Minor}: 'Unknown'");
+                        break;
+                }
+            }
+        }
+
+        private void EnteredRegion(object sender, MonitorEventArgs e)
+        {
+            if (!_started) return;
+
+            DisplayStatus("You entered the Beacon region");
+        }
+
+        private void ExitedRegion(object sender, MonitorEventArgs e)
+        {
+            if (!_started) return;
+
+            DisplayStatus("You exited the Beacon region");
+        }
+    }
+}
+

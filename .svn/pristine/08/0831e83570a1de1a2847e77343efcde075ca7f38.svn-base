@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6" />
+    </startup>
+    <system.serviceModel>
+        <bindings>
+            <basicHttpBinding>
+                <binding name="BasicHttpBinding_IBeaconPocService" />
+            </basicHttpBinding>
+        </bindings>
+        <client>
+            <endpoint address="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc"
+                binding="basicHttpBinding" bindingConfiguration="BasicHttpBinding_IBeaconPocService"
+                contract="BeaconPocService.IBeaconPocService" name="BasicHttpBinding_IBeaconPocService" />
+        </client>
+    </system.serviceModel>
+</configuration>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DiscoveryClientResultsFile xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results>
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.ContractReference" url="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc?wsdl" filename="BeaconService.wsdl" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc?xsd=xsd0" filename="BeaconPocService.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc?xsd=xsd1" filename="BeaconPocService0.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.SchemaReference" url="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc?xsd=xsd2" filename="BeaconPocService1.xsd" />
+    <DiscoveryClientResult referenceType="System.Web.Services.Discovery.DiscoveryDocumentReference" url="http://ax2012r3-demo-krissjessen2-2caf9e58513e877c.cloudapp.net/BeaconPocService.svc?disco" filename="BeaconPocService.disco" />
+  </Results>
+</DiscoveryClientResultsFile>
