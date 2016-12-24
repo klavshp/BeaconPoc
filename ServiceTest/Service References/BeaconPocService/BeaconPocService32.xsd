@@ -11,9 +11,10 @@
   <xs:element name="BeaconInfo" nillable="true" type="tns:BeaconInfo" />
   <xs:complexType name="AppInfo">
     <xs:sequence>
+      <xs:element minOccurs="0" name="ApkFilename" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="AppIdentifier" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="Comment" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Id" nillable="true" type="xs:string" />
-      <xs:element minOccurs="0" name="Name" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="AppInfo" nillable="true" type="tns:AppInfo" />
